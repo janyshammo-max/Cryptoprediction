@@ -64,7 +64,11 @@ function buildUrl(path: string, params: Record<string, string | number | undefin
   return url.toString();
 }
 
-async function safeFetch<T>(url: string, schema: z.ZodSchema<T>, cacheSeconds = 300): Promise<T> {
+async function safeFetch<Schema extends z.ZodTypeAny>(
+  url: string,
+  schema: Schema,
+  cacheSeconds = 300
+): Promise<z.infer<Schema>> {
   try {
     const res = await fetch(url, {
       headers: { "Content-Type": "application/json" },
@@ -122,7 +126,7 @@ export async function fetchLatestMarket(symbol: SupportedSymbol): Promise<Latest
     price_change_percentage: "24h"
   });
   try {
-    const result = await safeFetch(url, MarketSchema, 120);
+    const result = await safeFetch<z.infer<typeof MarketSchema>>(url, MarketSchema, 120);
     const entry = result[0];
     if (!entry) {
       throw new Error("No market data returned");
