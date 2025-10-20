@@ -64,7 +64,11 @@ function buildUrl(path: string, params: Record<string, string | number | undefin
   return url.toString();
 }
 
-async function safeFetch<T>(url: string, schema: z.ZodSchema<T>, cacheSeconds = 300): Promise<T> {
+async function safeFetch<Schema extends z.ZodTypeAny>(
+  url: string,
+  schema: Schema,
+  cacheSeconds = 300
+): Promise<z.infer<Schema>> {
   try {
     const res = await fetch(url, {
       headers: { "Content-Type": "application/json" },
