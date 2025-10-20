@@ -122,7 +122,7 @@ export async function fetchLatestMarket(symbol: SupportedSymbol): Promise<Latest
     price_change_percentage: "24h"
   });
   try {
-    const result = await safeFetch(url, MarketSchema, 120);
+    const result = await safeFetch<z.infer<typeof MarketSchema>>(url, MarketSchema, 120);
     const entry = result[0];
     if (!entry) {
       throw new Error("No market data returned");
